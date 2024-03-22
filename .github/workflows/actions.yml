@@ -1,7 +1,21 @@
 name: Deployment
 
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select the environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
 jobs:
+
   deployemnt-production:
+    if: github.event.inputs.environment == 'production'
     runs-on: ubuntu-latest
     environment: production
     steps:
@@ -9,13 +23,9 @@ jobs:
         run: echo "hello_setup"
 
   deployemnt-staging:
+    if: github.event.inputs.environment == 'staging'
     runs-on: ubuntu-latest
     environment: staging
     steps:
       - name: hello_staging
         run: echo "hello_staging"
-  
-  
-
-
-
