@@ -1,0 +1,21 @@
+name: Deployment
+
+jobs:
+  deployemnt-production:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: hello_step
+        run: echo "hello_setup"
+
+  deployemnt-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: hello_staging
+        run: echo "hello_staging"
+  
+  
+
+
+
