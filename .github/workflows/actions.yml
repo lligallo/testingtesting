@@ -33,8 +33,6 @@ jobs:
             - [ ] Verify the staging environment
             - [ ] Confirm the deployment plan
             Additional notes or questions:
-          approve-button-text: "Approve Deployment"
-          reject-button-text: "Reject Deployment"
 
   deployemnt-production:
       needs: approval
