@@ -2,30 +2,45 @@ name: Deployment
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Select the environment to deploy to'
-        required: true
-        default: 'staging'
-        type: choice
-        options:
-          - staging
-          - production
 
 jobs:
 
-  deployemnt-production:
-    if: github.event.inputs.environment == 'production'
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - name: hello_step
-        run: echo "hello_setup"
-
-  deployemnt-staging:
-    if: github.event.inputs.environment == 'staging'
+  staging:
     runs-on: ubuntu-latest
     environment: staging
     steps:
+      - uses: actions/checkout@v2
       - name: hello_staging
         run: echo "hello_staging"
+
+  approval:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://example.com
+    steps:
+      - name: Manual Approval
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ secrets.MANUAL_APPROVAL_TOKEN }}
+          approvers: user1,user2
+          minimum-approvals: 1
+          issue-title: "Manual Approval Required"
+          issue-body: |
+            Please review the following before approving the deployment:
+            - [ ] Check the test results
+            - [ ] Verify the staging environment
+            - [ ] Confirm the deployment plan
+            Additional notes or questions:
+          approve-button-text: "Approve Deployment"
+          reject-button-text: "Reject Deployment"
+
+  deployemnt-production:
+      needs: approval
+      runs-on: ubuntu-latest
+      environment: production
+      steps:
+        - uses: actions/checkout@v2
+        - name: hello_step
+          run: echo "hello_setup"
